@@ -13,12 +13,15 @@ public class Calculator implements ActionListener {
     JFrame frame;
     JTextField textField;
     JButton [] numberButtons = new JButton[10];
-    JButton [] functionButtons = new JButton[8];
-    JButton addButton, subButton, mulButton, divButton;
-    JButton decButton, eqButton, delButton, clrButton;
+    JButton [] functionButtons = new JButton[9];
+    JButton addButton, subButton, mulButton,
+            divButton, decButton, eqButton,
+            delButton, clrButton, negButton;
     JPanel panel;
-    Font myFont = new Font("Areal", Font.BOLD, 30);
+    Font myFont = new Font("Areal", Font.BOLD, 25);
     double num1= 0, num2 = 0, result =0;
+    char operator;
+    boolean operationSelected = false;
 
 
     Calculator(){
@@ -40,8 +43,9 @@ public class Calculator implements ActionListener {
        divButton = new JButton("/");
        decButton = new JButton(".");
        eqButton = new JButton("=");
-       delButton = new JButton("Delete");
-       clrButton = new JButton("Clear");
+       delButton = new JButton("Del");
+       clrButton = new JButton("C");
+       negButton = new JButton("(-)");
 
 
        functionButtons [0] = addButton;
@@ -52,9 +56,10 @@ public class Calculator implements ActionListener {
        functionButtons [5]= eqButton;
        functionButtons [6]=  delButton;
        functionButtons [7] = clrButton;
+       functionButtons [8] = negButton;
 
 
-       for ( int i =0 ; i < 8; i++){
+       for ( int i =0 ; i < 9; i++){
            functionButtons[i].addActionListener(this);
            functionButtons[i].setFont(myFont);
            functionButtons[i].setFocusable(false);
@@ -67,8 +72,9 @@ public class Calculator implements ActionListener {
             numberButtons[i].setFocusable(false);
         }
 
-        delButton.setBounds(50,430,145,50);
-        clrButton.setBounds(205,430,145,50);
+        negButton.setBounds(50,430,100,50);
+        delButton.setBounds(150,430,100,50);
+        clrButton.setBounds(250,430,100,50);
 
 
         panel = new JPanel();
@@ -76,29 +82,31 @@ public class Calculator implements ActionListener {
         panel.setLayout(new GridLayout(4,4,10,10));
         panel.setBackground(Color.LIGHT_GRAY);
 
+
+        // add the frame and panel
+
         panel.add(numberButtons[1]);
         panel.add(numberButtons[2]);
         panel.add(numberButtons[3]);
+        panel.add(addButton);
+
         panel.add(numberButtons[4]);
         panel.add(numberButtons[5]);
         panel.add(numberButtons[6]);
+        panel.add(subButton);
+
         panel.add(numberButtons[7]);
         panel.add(numberButtons[8]);
         panel.add(numberButtons[9]);
-        panel.add(numberButtons[0]);
-
-        panel.add(addButton);
-        panel.add(subButton);
         panel.add(divButton);
+
+        panel.add(numberButtons[0]);
+        panel.add(decButton);
         panel.add(mulButton);
-        
-
-
-
-
-
+        panel.add(eqButton);
 
        frame.add(textField);
+       frame.add(negButton);
        frame.add(clrButton);
        frame.add(delButton);
        frame.add(panel);
@@ -110,7 +118,97 @@ public class Calculator implements ActionListener {
         Calculator calc = new Calculator();
     }
 
+
+    // The functionalities
+    @Override
     public void actionPerformed(ActionEvent e){
+
+        // collect the values
+        for( int i =0 ; i < 10 ; i++){
+            if(e.getSource() == numberButtons [i]){
+                textField.setText(textField.getText().concat(String.valueOf(i)));
+            }
+        }
+
+        if(e.getSource() == decButton){
+            textField.setText(textField.getText().concat("."));
+        }
+        if(e.getSource() == addButton){
+            // convert string to double
+            num1 = Double.parseDouble(textField.getText());
+            operator = '+';
+            // clear
+            textField.setText("");
+            operationSelected = true;
+        }
+        if(e.getSource() == subButton){
+            // convert string to double
+            num1 = Double.parseDouble(textField.getText());
+            operator = '-';
+            // clear
+            textField.setText("");
+            operationSelected = true;
+        }
+        if(e.getSource() == mulButton){
+            // convert string to double
+            num1 = Double.parseDouble(textField.getText());
+            operator = '*';
+            // clear
+            textField.setText("");
+            operationSelected = true;
+        }
+        if(e.getSource() == divButton){
+            // convert string to double
+            num1 = Double.parseDouble(textField.getText());
+            operator = '/';
+            // clear
+            textField.setText("");
+            operationSelected = true;
+        }
+
+        if(e.getSource() == eqButton){
+            if(operationSelected){
+                num2 = Double.parseDouble(textField.getText());
+
+                switch (operator){
+                    case '+':
+                        result = num1 + num2;
+                        break;
+                    case '-':
+                        result = num1 - num2;
+                        break;
+                    case '*':
+                        result = num1 * num2;
+                        break;
+                    case '/':
+                        result = num1 / num2;
+                        break;
+                }
+                // update the text field
+                textField.setText(String.valueOf(result));
+                num1 = result;
+                operationSelected = false;
+            } else {
+                textField.setText(textField.getText()); // Just display the last number
+            }
+        }
+
+        if(e.getSource() == clrButton){
+            textField.setText("");
+        }
+
+        if (e.getSource()== delButton){
+            String s = textField.getText();
+            textField.setText("");
+            for(int i= 0; i < s.length()-1 ; i++){
+                textField.setText(textField.getText()+ s.charAt(i));
+            }
+        }
+        if (e.getSource()== negButton){
+            double temp = Double.parseDouble(textField.getText());
+            temp *=-1;
+            textField.setText(String.valueOf(temp));
+        }
 
     }
 }
